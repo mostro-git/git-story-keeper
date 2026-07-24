@@ -282,20 +282,22 @@ const Index = () => {
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 block border border-emerald-500/30"
-                      style={{ minHeight: '320px' }}
+                      className="group block"
                     >
-                      {u.imageUrl ? (
-                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${u.imageUrl})` }} />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-teal-400/10 to-emerald-300/5" />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent opacity-65 group-hover:opacity-75 transition-opacity duration-500" />
-                      <div className="absolute top-4 left-4 z-10 bg-emerald-600 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-medium">
-                        <WhatsAppIcon className="w-3 h-3" /> Único
-                      </div>
-                      <div className="relative h-full flex flex-col justify-between items-center text-center p-6 text-primary-foreground">
-                        <div className="flex-1 flex flex-col items-center justify-center gap-2">
+                      <div
+                        className="relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 group-hover:shadow-elevated group-hover:-translate-y-1 border border-emerald-500/30"
+                        style={{ minHeight: '260px' }}
+                      >
+                        {u.imageUrl ? (
+                          <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${u.imageUrl})` }} />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-teal-400/10 to-emerald-300/5" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent opacity-65 group-hover:opacity-75 transition-opacity duration-500" />
+                        <div className="absolute top-4 left-4 z-10 bg-emerald-600 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-medium">
+                          <WhatsAppIcon className="w-3 h-3" /> Único
+                        </div>
+                        <div className="relative h-full min-h-[260px] flex flex-col items-center justify-center gap-2 p-6 text-primary-foreground text-center">
                           <div className="flex items-center justify-center gap-2">
                             <WhatsAppIcon className="w-5 h-5 text-emerald-300" />
                             <h3 className="text-2xl font-display font-semibold">{u.name}</h3>
@@ -304,14 +306,14 @@ const Index = () => {
                             ↓ Solicitá tu turno por WhatsApp
                           </p>
                         </div>
-                        <Button
-                          size="lg"
-                          className="w-full mt-4 pointer-events-none bg-emerald-600 hover:bg-emerald-700 text-white"
-                        >
-                          <WhatsAppIcon className="w-5 h-5 mr-2" />
-                          Solicitar por WhatsApp
-                        </Button>
                       </div>
+                      <Button
+                        size="lg"
+                        className="w-full mt-4 pointer-events-none bg-emerald-600 hover:bg-emerald-700 text-white"
+                      >
+                        <WhatsAppIcon className="w-5 h-5 mr-2" />
+                        Solicitar por WhatsApp
+                      </Button>
                     </a>
                   );
                 })}
