@@ -26,6 +26,7 @@ import { Clock, User, Phone, Mail, CalendarDays, Sparkles, Plus, Loader2 } from 
 import { toast } from '@/hooks/use-toast';
 import Swal from 'sweetalert2';
 import { sendManualConfirmationEmail } from '@/lib/payments';
+import { formatPriceARS } from '@/lib/price';
 
 interface ManualBookingModalProps {
   open: boolean;
@@ -218,7 +219,7 @@ export function ManualBookingModal({ open, onOpenChange }: ManualBookingModalPro
                     <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">Servicios</div>
                     {services.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
-                        {s.name} ({s.duration} min - ${s.price.toLocaleString()})
+                        {s.name} ({s.duration} min - {formatPriceARS(s.price)})
                       </SelectItem>
                     ))}
                   </>
@@ -228,7 +229,7 @@ export function ManualBookingModal({ open, onOpenChange }: ManualBookingModalPro
                     <div className="px-2 py-1 mt-1 text-xs font-semibold text-muted-foreground border-t border-border">Especiales</div>
                     {specialServices.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
-                        ★ {s.name} ({s.duration} min - ${s.price.toLocaleString()})
+                        ★ {s.name} ({s.duration} min - {formatPriceARS(s.price)})
                       </SelectItem>
                     ))}
                   </>
