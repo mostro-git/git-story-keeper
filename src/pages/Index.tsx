@@ -205,20 +205,22 @@ const Index = () => {
                   <Link
                     key={cat.id}
                     to={`/especiales/${cat.id}`}
-                    className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 block border border-primary/20"
-                    style={{ minHeight: '320px' }}
+                    className="group block"
                   >
-                    {cat.imageUrl ? (
-                      <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${cat.imageUrl})` }} />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500" />
-                    <div className="absolute top-4 left-4 z-10 bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full flex items-center gap-1 font-medium">
-                      <Star className="w-3 h-3" /> Especial
-                    </div>
-                    <div className="relative h-full flex flex-col justify-between items-center text-center p-6 text-primary-foreground">
-                      <div className="flex-1 flex flex-col items-center justify-center gap-2">
+                    <div
+                      className="relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 group-hover:shadow-elevated group-hover:-translate-y-1 border border-primary/20"
+                      style={{ minHeight: '260px' }}
+                    >
+                      {cat.imageUrl ? (
+                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${cat.imageUrl})` }} />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500" />
+                      <div className="absolute top-4 left-4 z-10 bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full flex items-center gap-1 font-medium">
+                        <Star className="w-3 h-3" /> Especial
+                      </div>
+                      <div className="relative h-full min-h-[260px] flex flex-col items-center justify-center gap-2 p-6 text-primary-foreground text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Star className="w-5 h-5 text-gold-shimmer" />
                           <h3 className="text-2xl font-display font-semibold">{cat.name}</h3>
@@ -227,22 +229,24 @@ const Index = () => {
                           {specialsByCategory(cat.id).length} servicio{specialsByCategory(cat.id).length === 1 ? '' : 's'}
                         </p>
                       </div>
-                      <Button variant="gradient" size="lg" className="w-full mt-4 pointer-events-none">
-                        Ver Especiales
-                      </Button>
                     </div>
+                    <Button variant="gradient" size="lg" className="w-full mt-4 pointer-events-none">
+                      Ver Especiales
+                    </Button>
                   </Link>
                 ))}
                 {orphanSpecials.length > 0 && (
                   <Link
                     to={`/especiales/sin-categoria`}
-                    className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 block border border-primary/20"
-                    style={{ minHeight: '320px' }}
+                    className="group block"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-60" />
-                    <div className="relative h-full flex flex-col justify-between items-center text-center p-6 text-primary-foreground">
-                      <div className="flex-1 flex flex-col items-center justify-center gap-2">
+                    <div
+                      className="relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 group-hover:shadow-elevated group-hover:-translate-y-1 border border-primary/20"
+                      style={{ minHeight: '260px' }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-60" />
+                      <div className="relative h-full min-h-[260px] flex flex-col items-center justify-center gap-2 p-6 text-primary-foreground text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Star className="w-5 h-5 text-gold-shimmer" />
                           <h3 className="text-2xl font-display font-semibold">Otros Especiales</h3>
@@ -251,8 +255,8 @@ const Index = () => {
                           {orphanSpecials.length} servicio{orphanSpecials.length === 1 ? '' : 's'}
                         </p>
                       </div>
-                      <Button variant="gradient" size="lg" className="w-full mt-4 pointer-events-none">Ver</Button>
                     </div>
+                    <Button variant="gradient" size="lg" className="w-full mt-4 pointer-events-none">Ver</Button>
                   </Link>
                 )}
               </div>
