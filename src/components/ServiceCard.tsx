@@ -35,7 +35,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
             <h3 className="text-2xl font-display font-semibold">{service.name}</h3>
           </div>
 
-          <p className="text-sm text-muted-foreground whitespace-pre-line break-words">
+          <p className="text-sm text-muted-foreground whitespace-pre-line break-words [overflow-wrap:anywhere] w-full">
             {service.description}
           </p>
 
