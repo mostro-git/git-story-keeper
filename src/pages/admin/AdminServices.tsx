@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2, Edit, Clock, DollarSign, Sparkles, Upload, X, Crop, CalendarDays, Star, FolderTree, Tag, MessageCircle, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { ImageCropper } from '@/components/ImageCropper';
+import { parsePrice, formatPriceARS } from '@/lib/price';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const DAYS_OF_WEEK = [
@@ -522,7 +523,7 @@ export default function AdminServices() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{service.duration} min</span>
-                    <span className="flex items-center gap-1"><DollarSign className="w-4 h-4" />${service.price.toLocaleString()}</span>
+                    <span className="flex items-center gap-1"><DollarSign className="w-4 h-4" />{formatPriceARS(service.price)}</span>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEdit(service)}><Edit className="w-4 h-4 mr-1" /> Editar</Button>
@@ -588,7 +589,13 @@ export default function AdminServices() {
                 </Select>
               </div>
               <div className="space-y-2"><Label>Precio ($)</Label>
-                <Input type="number" value={formData.price || ''} onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })} />
+                <Input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="30000"
+                  value={formData.price ? formatPriceARS(formData.price).replace('$', '') : ''}
+                  onChange={(e) => setFormData({ ...formData, price: parsePrice(e.target.value) })}
+                />
               </div>
             </div>
             <ImagePicker
@@ -692,7 +699,7 @@ export default function AdminServices() {
                   <CardContent className="space-y-3">
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{sp.duration} min</span>
-                      <span className="flex items-center gap-1"><DollarSign className="w-4 h-4" />${sp.price.toLocaleString()}</span>
+                      <span className="flex items-center gap-1"><DollarSign className="w-4 h-4" />{formatPriceARS(sp.price)}</span>
                     </div>
                     {sp.date && <div className="text-xs">📅 {sp.date}</div>}
                     <div className="flex gap-2">
@@ -757,7 +764,13 @@ export default function AdminServices() {
                   </Select>
                 </div>
                 <div className="space-y-2"><Label>Precio ($)</Label>
-                  <Input type="number" value={specialFormData.price || ''} onChange={(e) => setSpecialFormData({ ...specialFormData, price: parseFloat(e.target.value) || 0 })} />
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="30000"
+                    value={specialFormData.price ? formatPriceARS(specialFormData.price).replace('$', '') : ''}
+                    onChange={(e) => setSpecialFormData({ ...specialFormData, price: parsePrice(e.target.value) })}
+                  />
                 </div>
               </div>
               <ImagePicker

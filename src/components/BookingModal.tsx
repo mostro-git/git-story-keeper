@@ -19,6 +19,7 @@ import { Clock, User, Phone, Mail, CalendarDays, CreditCard, Loader2, Tag } from
 import { toast } from '@/hooks/use-toast';
 import Swal from 'sweetalert2';
 import { calculateDeposit, createPaymentPreference } from '@/lib/payments';
+import { formatPriceARS } from '@/lib/price';
 
 interface BookingModalProps {
   service: Service;
@@ -240,7 +241,7 @@ export function BookingModal({ service, open, onOpenChange, fixedDate }: Booking
             <DialogDescription className="text-muted-foreground">
               <span className="font-semibold text-primary">{service.name}</span>
               <br />
-              Duración: {service.duration} minutos • ${service.price.toLocaleString()}
+              Duración: {service.duration} minutos • {formatPriceARS(service.price)}
             </DialogDescription>
           </DialogHeader>
 
@@ -410,7 +411,7 @@ export function BookingModal({ service, open, onOpenChange, fixedDate }: Booking
               <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3 space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span>Precio total:</span>
-                  <span className="font-medium">${service.price.toLocaleString()}</span>
+                  <span className="font-medium">{formatPriceARS(service.price)}</span>
                 </div>
                 <div className="flex justify-between text-primary">
                   <span className="font-semibold">Seña a pagar ahora (50%):</span>
