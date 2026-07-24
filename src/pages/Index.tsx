@@ -164,26 +164,28 @@ const Index = () => {
                   <Link
                     key={section.id}
                     to={`/seccion/${section.id}`}
-                    className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 block"
-                    style={{ minHeight: '320px' }}
+                    className="group block"
                   >
-                    {section.imageUrl ? (
-                      <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${section.imageUrl})` }} />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-rose-gold-light/30 via-cream to-dusty-rose/20" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500" />
-                    <div className="relative h-full flex flex-col justify-between items-center text-center p-6 text-primary-foreground">
-                      <div className="flex-1 flex items-center justify-center">
+                    <div
+                      className="relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 group-hover:shadow-elevated group-hover:-translate-y-1"
+                      style={{ minHeight: '260px' }}
+                    >
+                      {section.imageUrl ? (
+                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${section.imageUrl})` }} />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-rose-gold-light/30 via-cream to-dusty-rose/20" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500" />
+                      <div className="relative h-full min-h-[260px] flex items-center justify-center p-6 text-primary-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <Sparkles className="w-5 h-5 text-gold-shimmer" />
                           <h3 className="text-2xl font-display font-semibold">{section.name}</h3>
                         </div>
                       </div>
-                      <Button variant="gradient" size="lg" className="w-full mt-4 pointer-events-none">
-                        Ver Servicios
-                      </Button>
                     </div>
+                    <Button variant="gradient" size="lg" className="w-full mt-4 pointer-events-none">
+                      Ver Servicios
+                    </Button>
                   </Link>
                 ))}
               </div>
