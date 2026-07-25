@@ -128,10 +128,8 @@ export default function AdminServices() {
   // ===== Promotion dialog =====
   const [isPromoDialogOpen, setIsPromoDialogOpen] = useState(false);
   const [editingPromo, setEditingPromo] = useState<Promotion | null>(null);
-  const [isPromoCropperOpen, setIsPromoCropperOpen] = useState(false);
-  const [promoTempImg, setPromoTempImg] = useState('');
   const [promoForm, setPromoForm] = useState<Partial<Promotion>>({
-    name: '', description: '', imageUrl: '', discountPercent: 10, items: [],
+    name: '', description: '', phone: '',
   });
 
   // ===== Unique service dialog =====
