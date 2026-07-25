@@ -332,10 +332,10 @@ export default function AdminServices() {
             <DialogTrigger asChild>
               <Button variant="gradient" className="w-full sm:w-auto"><Plus className="w-4 h-4 mr-2" />Agregar Promoción</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="font-display text-2xl">{editingPromo ? 'Editar Promoción' : 'Nueva Promoción'}</DialogTitle>
-                <DialogDescription>Definí título, descripción, % de descuento, foto y servicios incluidos.</DialogDescription>
+                <DialogDescription>Título, descripción y un número de WhatsApp al que dirigir la consulta.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
@@ -344,51 +344,16 @@ export default function AdminServices() {
                 </div>
                 <div className="space-y-2">
                   <Label>Descripción</Label>
-                  <Textarea rows={3} value={promoForm.description || ''} onChange={(e) => setPromoForm({ ...promoForm, description: e.target.value })} placeholder="Detalle de la promoción..." />
+                  <Textarea rows={4} value={promoForm.description || ''} onChange={(e) => setPromoForm({ ...promoForm, description: e.target.value })} placeholder="Detalle de la promoción..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>% de Descuento</Label>
-                  <Input type="number" min={0} max={100} value={promoForm.discountPercent ?? ''} onChange={(e) => setPromoForm({ ...promoForm, discountPercent: parseFloat(e.target.value) || 0 })} />
-                </div>
-                <ImagePicker
-                  imageUrl={promoForm.imageUrl}
-                  onChange={(url) => setPromoForm({ ...promoForm, imageUrl: url })}
-                  cropperOpen={isPromoCropperOpen} setCropperOpen={setIsPromoCropperOpen}
-                  tempImg={promoTempImg} setTempImg={setPromoTempImg}
-                />
-                <div className="space-y-2">
-                  <Label>Servicios incluidos</Label>
-                  <div className="border border-border rounded-lg p-3 max-h-64 overflow-y-auto space-y-3">
-                    {sections.map((sec) => {
-                      const list = servicesBySection(sec.id);
-                      if (list.length === 0) return null;
-                      return (
-                        <div key={sec.id}>
-                          <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">{sec.name}</p>
-                          {list.map((sv) => (
-                            <label key={sv.id} className="flex items-center gap-2 py-1 cursor-pointer">
-                              <Checkbox checked={isItemSelected({ id: sv.id, type: 'service' })} onCheckedChange={() => toggleItem({ id: sv.id, type: 'service' })} />
-                              <span className="text-sm">{sv.name}</span>
-                            </label>
-                          ))}
-                        </div>
-                      );
-                    })}
-                    {specialServices.length > 0 && (
-                      <div>
-                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Especiales</p>
-                        {specialServices.map((sv) => (
-                          <label key={sv.id} className="flex items-center gap-2 py-1 cursor-pointer">
-                            <Checkbox checked={isItemSelected({ id: sv.id, type: 'special' })} onCheckedChange={() => toggleItem({ id: sv.id, type: 'special' })} />
-                            <span className="text-sm">{sv.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                    {sections.length === 0 && specialServices.length === 0 && (
-                      <p className="text-xs text-muted-foreground">Primero creá servicios o especiales.</p>
-                    )}
-                  </div>
+                  <Label className="flex items-center gap-2"><Phone className="w-4 h-4" /> WhatsApp (opcional)</Label>
+                  <Input
+                    value={promoForm.phone || ''}
+                    onChange={(e) => setPromoForm({ ...promoForm, phone: e.target.value })}
+                    placeholder="Ej: 5492613820741 (solo dígitos, con código país)"
+                  />
+                  <p className="text-xs text-muted-foreground">Si lo dejás vacío, se usa el número por defecto de la estética.</p>
                 </div>
               </div>
               <DialogFooter>
@@ -402,22 +367,20 @@ export default function AdminServices() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {promotions.map((promo) => (
             <Card key={promo.id} className="card-elevated overflow-hidden border-primary/30">
-              {promo.imageUrl ? (
-                <div className="h-32 bg-cover bg-center" style={{ backgroundImage: `url(${promo.imageUrl})` }} />
-              ) : (
-                <div className="h-32 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10 flex items-center justify-center">
-                  <Tag className="w-12 h-12 text-primary/40" />
-                </div>
-              )}
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="font-display text-xl">{promo.name}</CardTitle>
-                  <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-bold">-{promo.discountPercent}%</span>
+                  <CardTitle className="font-display text-xl flex items-center gap-2">
+                    <Tag className="w-5 h-5 text-primary" />
+                    {promo.name}
+                  </CardTitle>
                 </div>
-                <CardDescription className="line-clamp-2">{promo.description}</CardDescription>
+                <CardDescription className="line-clamp-3 whitespace-pre-line">{promo.description}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-xs text-muted-foreground">{promo.items.length} servicio{promo.items.length === 1 ? '' : 's'} incluido{promo.items.length === 1 ? '' : 's'}</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  {promo.phone ? `WhatsApp: +${promo.phone}` : 'WhatsApp por defecto'}
+                </p>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" className="flex-1" onClick={() => handlePromoEdit(promo)}><Edit className="w-4 h-4 mr-1" /> Editar</Button>
                   <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive hover:text-destructive-foreground" onClick={() => handlePromoDelete(promo)}><Trash2 className="w-4 h-4" /></Button>
@@ -430,6 +393,7 @@ export default function AdminServices() {
           )}
         </div>
       </div>
+
 
       {/* ============== SECCIONES ============== */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
