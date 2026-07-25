@@ -113,36 +113,36 @@ const Index = () => {
                 </h3>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {promotions.map((promo) => (
-                  <div
-                    key={promo.id}
-                    className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 border-2 border-primary/40"
-                    style={{ minHeight: '300px' }}
-                  >
-                    {promo.imageUrl ? (
-                      <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${promo.imageUrl})` }} />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-70" />
-                    <div className="absolute top-4 right-4 z-10 bg-primary text-primary-foreground text-base px-4 py-1.5 rounded-full font-bold shadow-lg">
-                      -{promo.discountPercent}%
-                    </div>
-                    <div className="relative h-full flex flex-col justify-center items-center text-center p-6 text-primary-foreground">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-center gap-2">
-                          <Tag className="w-5 h-5 text-gold-shimmer" />
-                          <h3 className="text-2xl font-display font-semibold">{promo.name}</h3>
+                {promotions.map((promo) => {
+                  const phone = (promo.phone && promo.phone.trim()) || DEFAULT_WHATSAPP;
+                  const msg = encodeURIComponent(`Hola! Me interesa la promoción: ${promo.name}`);
+                  const href = `https://wa.me/${phone}?text=${msg}`;
+                  return (
+                    <div key={promo.id} className="flex flex-col gap-4">
+                      <div className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 border-2 border-primary/40 min-h-[220px]">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-70" />
+                        <div className="relative h-full flex flex-col justify-center items-center text-center p-6 text-primary-foreground gap-3">
+                          <div className="flex items-center justify-center gap-2">
+                            <Tag className="w-5 h-5 text-gold-shimmer" />
+                            <h3 className="text-2xl font-display font-semibold">{promo.name}</h3>
+                          </div>
+                          <p className="text-sm text-primary-foreground/90 whitespace-pre-line [overflow-wrap:anywhere]">
+                            {promo.description}
+                          </p>
                         </div>
-                        <p className="text-sm text-primary-foreground/90 line-clamp-3">{promo.description}</p>
-                        <p className="text-xs text-primary-foreground/70">
-                          {promo.items.length} servicio{promo.items.length === 1 ? '' : 's'} incluido{promo.items.length === 1 ? '' : 's'}
-                        </p>
                       </div>
+                      <Button asChild className="w-full bg-[#25D366] hover:bg-[#20b858] text-white gap-2">
+                        <a href={href} target="_blank" rel="noopener noreferrer">
+                          <WhatsAppIcon className="w-4 h-4" />
+                          Consultar por WhatsApp
+                        </a>
+                      </Button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+
             </div>
           )}
 
