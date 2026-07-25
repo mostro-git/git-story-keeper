@@ -325,7 +325,7 @@ export default function AdminServices() {
               <Tag className="w-6 h-6 text-primary" /> Promociones
             </h1>
             <p className="text-muted-foreground mt-1 text-sm md:text-base">
-              Aparecen en la página principal arriba de las secciones. Se asocian a uno o más servicios.
+              Aparecen en la página principal. Cada promoción redirige a WhatsApp con un mensaje pre-llenado.
             </p>
           </div>
           <Dialog open={isPromoDialogOpen} onOpenChange={(o) => { setIsPromoDialogOpen(o); if (!o) resetPromoForm(); }}>
