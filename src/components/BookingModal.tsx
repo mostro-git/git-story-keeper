@@ -29,7 +29,7 @@ interface BookingModalProps {
 }
 
 export function BookingModal({ service, open, onOpenChange, fixedDate }: BookingModalProps) {
-  const { schedule, appointments, addAppointment, specialServices, blockedDates, promotions, services } = useStore();
+  const { schedule, appointments, addAppointment, specialServices, blockedDates } = useStore();
   const isSpecialService = specialServices.some((s) => s.id === service.id);
   const appointmentKind: 'service' | 'special' = isSpecialService ? 'special' : 'service';
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
@@ -47,20 +47,6 @@ export function BookingModal({ service, open, onOpenChange, fixedDate }: Booking
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
-
-
-  // Promociones que incluyen este servicio (regular o especial)
-  const matchingPromos = promotions.filter((p) =>
-    p.items.some((it) => it.id === service.id),
-  );
-  const promoItemLabel = (item: { id: string; type: 'service' | 'special' }) => {
-    if (item.type === 'special') {
-      const sp = specialServices.find((x) => x.id === item.id);
-      return sp ? sp.name : 'Servicio especial';
-    }
-    const sv = services.find((x) => x.id === item.id);
-    return sv ? sv.name : 'Servicio';
-  };
 
   const depositAmount = calculateDeposit(service.price);
   const remainingAmount = service.price - depositAmount;
