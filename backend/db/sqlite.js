@@ -274,6 +274,16 @@ function init() {
     `);
   } catch (e) { log('DB', 'migración appointments.kind falló: ' + (e && e.message)); }
 
+  // Migración: columna phone en promotions
+  try {
+    const cols = db.prepare("PRAGMA table_info(promotions)").all();
+    if (!cols.some((c) => c.name === 'phone')) {
+      db.exec("ALTER TABLE promotions ADD COLUMN phone TEXT");
+      log('DB', '✓ migración: promotions.phone agregada');
+    }
+  } catch (e) { log('DB', 'migración promotions.phone falló: ' + (e && e.message)); }
+
+
   log('DB', `✓ SQLite lista en ${DB_PATH}`);
 }
 
