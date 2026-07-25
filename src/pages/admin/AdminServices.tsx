@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
-import { Service, SpecialService, Section, SpecialCategory, Promotion, PromotionItem, UniqueService } from '@/types';
+import { Service, SpecialService, Section, SpecialCategory, Promotion, UniqueService } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
