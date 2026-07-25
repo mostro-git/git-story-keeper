@@ -280,29 +280,26 @@ export default function AdminServices() {
   const openNewSpecialFor = (categoryId: string) => { resetSpecialForm(); setSpecialFormData((f) => ({ ...f, categoryId })); setIsSpecialDialogOpen(true); };
 
   // ───── Promotions ─────
-  const resetPromoForm = () => { setPromoForm({ name: '', description: '', imageUrl: '', discountPercent: 10, items: [] }); setEditingPromo(null); };
-  const toggleItem = (item: PromotionItem) => {
-    const items = promoForm.items || [];
-    const key = (i: PromotionItem) => `${i.type}:${i.id}`;
-    const exists = items.some((i) => key(i) === key(item));
-    setPromoForm({ ...promoForm, items: exists ? items.filter((i) => key(i) !== key(item)) : [...items, item] });
-  };
-  const isItemSelected = (item: PromotionItem) =>
-    (promoForm.items || []).some((i) => i.type === item.type && i.id === item.id);
+  const resetPromoForm = () => { setPromoForm({ name: '', description: '', phone: '' }); setEditingPromo(null); };
   const handlePromoSubmit = () => {
-    if (!promoForm.name?.trim()) { toast({ title: 'Error', description: 'El nombre es obligatorio', variant: 'destructive' }); return; }
-    const pct = Number(promoForm.discountPercent);
-    if (isNaN(pct) || pct < 0 || pct > 100) { toast({ title: 'Error', description: 'Descuento entre 0 y 100', variant: 'destructive' }); return; }
-    if (!promoForm.items || promoForm.items.length === 0) { toast({ title: 'Error', description: 'Seleccioná al menos un servicio', variant: 'destructive' }); return; }
+    if (!promoForm.name?.trim() || !promoForm.description?.trim()) {
+      toast({ title: 'Faltan datos', description: 'Completá título y descripción', variant: 'destructive' });
+      return;
+    }
+    const phone = (promoForm.phone || '').replace(/\D/g, '');
     if (editingPromo) {
-      updatePromotion(editingPromo.id, promoForm);
+      updatePromotion(editingPromo.id, { ...promoForm, phone });
       toast({ title: 'Promoción actualizada', description: promoForm.name });
     } else {
       const np: Promotion = {
-        id: Date.now().toString(), name: promoForm.name!, description: promoForm.description || '',
-        imageUrl: promoForm.imageUrl || undefined, discountPercent: pct, items: promoForm.items!,
+        id: Date.now().toString(),
+        name: promoForm.name!.trim(),
+        description: promoForm.description!.trim(),
+        phone,
+        position: promotions.length,
       };
-      addPromotion(np); toast({ title: 'Promoción creada', description: np.name });
+      addPromotion(np);
+      toast({ title: 'Promoción creada', description: np.name });
     }
     resetPromoForm(); setIsPromoDialogOpen(false);
   };
