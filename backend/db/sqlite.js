@@ -883,16 +883,12 @@ function deleteSpecialCategory(id) {
 // ─────────────────────────── Promotions ───────────────────────────
 function mapPromotion(r) {
   if (!r) return null;
-  const items = db.prepare('SELECT item_id, item_type FROM promotion_items WHERE promotion_id = ?')
-    .all(r.id).map((x) => ({ id: x.item_id, type: x.item_type }));
   return {
     id: r.id,
     name: r.name,
     description: r.description || '',
-    imageUrl: r.image_url || undefined,
-    discountPercent: Number(r.discount_percent || 0),
+    phone: r.phone || undefined,
     position: Number(r.position || 0),
-    items,
   };
 }
 function listPromotions() {
@@ -901,25 +897,15 @@ function listPromotions() {
 }
 function upsertPromotion(p) {
   const pos = p.position == null ? Date.now() : Number(p.position);
-  const tx = db.transaction(() => {
-    db.prepare(`
-      INSERT INTO promotions (id, name, description, image_url, discount_percent, position)
-      VALUES (?, ?, ?, ?, ?, ?)
-      ON CONFLICT(id) DO UPDATE SET
-        name = excluded.name, description = excluded.description,
-        image_url = excluded.image_url, discount_percent = excluded.discount_percent,
-        position = excluded.position, updated_at = datetime('now')
-    `).run(p.id, p.name, p.description || '', p.imageUrl || null,
-           Number(p.discountPercent || 0), pos);
-    db.prepare('DELETE FROM promotion_items WHERE promotion_id = ?').run(p.id);
-    const ins = db.prepare('INSERT OR IGNORE INTO promotion_items (promotion_id, item_id, item_type) VALUES (?, ?, ?)');
-    for (const it of (Array.isArray(p.items) ? p.items : [])) {
-      if (!it || !it.id) continue;
-      const type = it.type === 'special' ? 'special' : 'service';
-      ins.run(p.id, String(it.id), type);
-    }
-  });
-  tx();
+  const phone = (p.phone || '').replace(/\D/g, '') || null;
+  db.prepare(`
+    INSERT INTO promotions (id, name, description, phone, position)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      name = excluded.name, description = excluded.description,
+      phone = excluded.phone, position = excluded.position,
+      updated_at = datetime('now')
+  `).run(p.id, p.name, p.description || '', phone, pos);
   return mapPromotion(db.prepare('SELECT * FROM promotions WHERE id = ?').get(p.id));
 }
 function deletePromotion(id) {
