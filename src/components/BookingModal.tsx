@@ -231,37 +231,8 @@ export function BookingModal({ service, open, onOpenChange, fixedDate }: Booking
             </DialogDescription>
           </DialogHeader>
 
-          {matchingPromos.length > 0 && (
-            <div className="mt-4 space-y-3">
-              {matchingPromos.map((promo) => (
-                <div key={promo.id} className="rounded-lg border-2 border-primary/40 bg-primary/5 p-4 space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <Tag className="w-4 h-4 text-primary" />
-                      <span className="font-semibold text-foreground">{promo.name}</span>
-                    </div>
-                    <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
-                      -{promo.discountPercent}%
-                    </span>
-                  </div>
-                  {promo.description && (
-                    <p className="text-xs text-muted-foreground">{promo.description}</p>
-                  )}
-                  <div>
-                    <p className="text-xs font-medium text-foreground mb-1">Incluye:</p>
-                    <ul className="text-xs text-muted-foreground space-y-0.5 list-disc list-inside">
-                      {promo.items.map((it) => (
-                        <li key={it.type + ':' + it.id}>
-                          {promoItemLabel(it)}
-                          {it.id === service.id && <span className="text-primary"> (este servicio)</span>}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+
+
 
           <div className="space-y-6 py-4">
             <div className="space-y-4">
