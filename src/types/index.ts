@@ -85,20 +85,17 @@ export interface SpecialCategory {
   position?: number;
 }
 
-export type PromotionItemType = 'service' | 'special';
-export interface PromotionItem {
-  id: string;
-  type: PromotionItemType;
-}
-
+/**
+ * Promotion: bloque promocional simple que redirige a WhatsApp.
+ * Solo requiere título, descripción y un teléfono opcional (si está vacío
+ * se usa el número por defecto de la estética).
+ */
 export interface Promotion {
   id: string;
   name: string;
   description: string;
-  imageUrl?: string;
-  discountPercent: number; // 0..100
+  phone?: string; // formato wa.me: solo dígitos con código país
   position?: number;
-  items: PromotionItem[];
 }
 
 /**

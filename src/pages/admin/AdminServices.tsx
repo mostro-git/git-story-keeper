@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
-import { Service, SpecialService, Section, SpecialCategory, Promotion, PromotionItem, UniqueService } from '@/types';
+import { Service, SpecialService, Section, SpecialCategory, Promotion, UniqueService } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -128,10 +128,8 @@ export default function AdminServices() {
   // ===== Promotion dialog =====
   const [isPromoDialogOpen, setIsPromoDialogOpen] = useState(false);
   const [editingPromo, setEditingPromo] = useState<Promotion | null>(null);
-  const [isPromoCropperOpen, setIsPromoCropperOpen] = useState(false);
-  const [promoTempImg, setPromoTempImg] = useState('');
   const [promoForm, setPromoForm] = useState<Partial<Promotion>>({
-    name: '', description: '', imageUrl: '', discountPercent: 10, items: [],
+    name: '', description: '', phone: '',
   });
 
   // ===== Unique service dialog =====
@@ -282,29 +280,26 @@ export default function AdminServices() {
   const openNewSpecialFor = (categoryId: string) => { resetSpecialForm(); setSpecialFormData((f) => ({ ...f, categoryId })); setIsSpecialDialogOpen(true); };
 
   // ───── Promotions ─────
-  const resetPromoForm = () => { setPromoForm({ name: '', description: '', imageUrl: '', discountPercent: 10, items: [] }); setEditingPromo(null); };
-  const toggleItem = (item: PromotionItem) => {
-    const items = promoForm.items || [];
-    const key = (i: PromotionItem) => `${i.type}:${i.id}`;
-    const exists = items.some((i) => key(i) === key(item));
-    setPromoForm({ ...promoForm, items: exists ? items.filter((i) => key(i) !== key(item)) : [...items, item] });
-  };
-  const isItemSelected = (item: PromotionItem) =>
-    (promoForm.items || []).some((i) => i.type === item.type && i.id === item.id);
+  const resetPromoForm = () => { setPromoForm({ name: '', description: '', phone: '' }); setEditingPromo(null); };
   const handlePromoSubmit = () => {
-    if (!promoForm.name?.trim()) { toast({ title: 'Error', description: 'El nombre es obligatorio', variant: 'destructive' }); return; }
-    const pct = Number(promoForm.discountPercent);
-    if (isNaN(pct) || pct < 0 || pct > 100) { toast({ title: 'Error', description: 'Descuento entre 0 y 100', variant: 'destructive' }); return; }
-    if (!promoForm.items || promoForm.items.length === 0) { toast({ title: 'Error', description: 'Seleccioná al menos un servicio', variant: 'destructive' }); return; }
+    if (!promoForm.name?.trim() || !promoForm.description?.trim()) {
+      toast({ title: 'Faltan datos', description: 'Completá título y descripción', variant: 'destructive' });
+      return;
+    }
+    const phone = (promoForm.phone || '').replace(/\D/g, '');
     if (editingPromo) {
-      updatePromotion(editingPromo.id, promoForm);
+      updatePromotion(editingPromo.id, { ...promoForm, phone });
       toast({ title: 'Promoción actualizada', description: promoForm.name });
     } else {
       const np: Promotion = {
-        id: Date.now().toString(), name: promoForm.name!, description: promoForm.description || '',
-        imageUrl: promoForm.imageUrl || undefined, discountPercent: pct, items: promoForm.items!,
+        id: Date.now().toString(),
+        name: promoForm.name!.trim(),
+        description: promoForm.description!.trim(),
+        phone,
+        position: promotions.length,
       };
-      addPromotion(np); toast({ title: 'Promoción creada', description: np.name });
+      addPromotion(np);
+      toast({ title: 'Promoción creada', description: np.name });
     }
     resetPromoForm(); setIsPromoDialogOpen(false);
   };
@@ -330,17 +325,17 @@ export default function AdminServices() {
               <Tag className="w-6 h-6 text-primary" /> Promociones
             </h1>
             <p className="text-muted-foreground mt-1 text-sm md:text-base">
-              Aparecen en la página principal arriba de las secciones. Se asocian a uno o más servicios.
+              Aparecen en la página principal. Cada promoción redirige a WhatsApp con un mensaje pre-llenado.
             </p>
           </div>
           <Dialog open={isPromoDialogOpen} onOpenChange={(o) => { setIsPromoDialogOpen(o); if (!o) resetPromoForm(); }}>
             <DialogTrigger asChild>
               <Button variant="gradient" className="w-full sm:w-auto"><Plus className="w-4 h-4 mr-2" />Agregar Promoción</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="font-display text-2xl">{editingPromo ? 'Editar Promoción' : 'Nueva Promoción'}</DialogTitle>
-                <DialogDescription>Definí título, descripción, % de descuento, foto y servicios incluidos.</DialogDescription>
+                <DialogDescription>Título, descripción y un número de WhatsApp al que dirigir la consulta.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
@@ -349,51 +344,16 @@ export default function AdminServices() {
                 </div>
                 <div className="space-y-2">
                   <Label>Descripción</Label>
-                  <Textarea rows={3} value={promoForm.description || ''} onChange={(e) => setPromoForm({ ...promoForm, description: e.target.value })} placeholder="Detalle de la promoción..." />
+                  <Textarea rows={4} value={promoForm.description || ''} onChange={(e) => setPromoForm({ ...promoForm, description: e.target.value })} placeholder="Detalle de la promoción..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>% de Descuento</Label>
-                  <Input type="number" min={0} max={100} value={promoForm.discountPercent ?? ''} onChange={(e) => setPromoForm({ ...promoForm, discountPercent: parseFloat(e.target.value) || 0 })} />
-                </div>
-                <ImagePicker
-                  imageUrl={promoForm.imageUrl}
-                  onChange={(url) => setPromoForm({ ...promoForm, imageUrl: url })}
-                  cropperOpen={isPromoCropperOpen} setCropperOpen={setIsPromoCropperOpen}
-                  tempImg={promoTempImg} setTempImg={setPromoTempImg}
-                />
-                <div className="space-y-2">
-                  <Label>Servicios incluidos</Label>
-                  <div className="border border-border rounded-lg p-3 max-h-64 overflow-y-auto space-y-3">
-                    {sections.map((sec) => {
-                      const list = servicesBySection(sec.id);
-                      if (list.length === 0) return null;
-                      return (
-                        <div key={sec.id}>
-                          <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">{sec.name}</p>
-                          {list.map((sv) => (
-                            <label key={sv.id} className="flex items-center gap-2 py-1 cursor-pointer">
-                              <Checkbox checked={isItemSelected({ id: sv.id, type: 'service' })} onCheckedChange={() => toggleItem({ id: sv.id, type: 'service' })} />
-                              <span className="text-sm">{sv.name}</span>
-                            </label>
-                          ))}
-                        </div>
-                      );
-                    })}
-                    {specialServices.length > 0 && (
-                      <div>
-                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Especiales</p>
-                        {specialServices.map((sv) => (
-                          <label key={sv.id} className="flex items-center gap-2 py-1 cursor-pointer">
-                            <Checkbox checked={isItemSelected({ id: sv.id, type: 'special' })} onCheckedChange={() => toggleItem({ id: sv.id, type: 'special' })} />
-                            <span className="text-sm">{sv.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                    {sections.length === 0 && specialServices.length === 0 && (
-                      <p className="text-xs text-muted-foreground">Primero creá servicios o especiales.</p>
-                    )}
-                  </div>
+                  <Label className="flex items-center gap-2"><Phone className="w-4 h-4" /> WhatsApp (opcional)</Label>
+                  <Input
+                    value={promoForm.phone || ''}
+                    onChange={(e) => setPromoForm({ ...promoForm, phone: e.target.value })}
+                    placeholder="Ej: 5492613820741 (solo dígitos, con código país)"
+                  />
+                  <p className="text-xs text-muted-foreground">Si lo dejás vacío, se usa el número por defecto de la estética.</p>
                 </div>
               </div>
               <DialogFooter>
@@ -407,22 +367,20 @@ export default function AdminServices() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {promotions.map((promo) => (
             <Card key={promo.id} className="card-elevated overflow-hidden border-primary/30">
-              {promo.imageUrl ? (
-                <div className="h-32 bg-cover bg-center" style={{ backgroundImage: `url(${promo.imageUrl})` }} />
-              ) : (
-                <div className="h-32 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10 flex items-center justify-center">
-                  <Tag className="w-12 h-12 text-primary/40" />
-                </div>
-              )}
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="font-display text-xl">{promo.name}</CardTitle>
-                  <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-bold">-{promo.discountPercent}%</span>
+                  <CardTitle className="font-display text-xl flex items-center gap-2">
+                    <Tag className="w-5 h-5 text-primary" />
+                    {promo.name}
+                  </CardTitle>
                 </div>
-                <CardDescription className="line-clamp-2">{promo.description}</CardDescription>
+                <CardDescription className="line-clamp-3 whitespace-pre-line">{promo.description}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-xs text-muted-foreground">{promo.items.length} servicio{promo.items.length === 1 ? '' : 's'} incluido{promo.items.length === 1 ? '' : 's'}</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  {promo.phone ? `WhatsApp: +${promo.phone}` : 'WhatsApp por defecto'}
+                </p>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" className="flex-1" onClick={() => handlePromoEdit(promo)}><Edit className="w-4 h-4 mr-1" /> Editar</Button>
                   <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive hover:text-destructive-foreground" onClick={() => handlePromoDelete(promo)}><Trash2 className="w-4 h-4" /></Button>
@@ -435,6 +393,7 @@ export default function AdminServices() {
           )}
         </div>
       </div>
+
 
       {/* ============== SECCIONES ============== */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
