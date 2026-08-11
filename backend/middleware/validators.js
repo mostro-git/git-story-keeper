@@ -117,6 +117,7 @@ const promotionRules = [
   body('id').isString().trim().matches(/^[A-Za-z0-9_\-]{1,80}$/),
   body('name').isString().trim().isLength({ min: 1, max: 200 }),
   body('description').optional({ nullable: true }).isString().isLength({ max: 2000 }),
+  body('imageUrl').optional({ nullable: true, checkFalsy: true }).isString().isLength({ max: 1_000_000 }),
   body('phone').optional({ nullable: true, checkFalsy: true }).isString().isLength({ max: 40 }),
 ];
 
