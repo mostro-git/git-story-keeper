@@ -120,7 +120,11 @@ const Index = () => {
                   return (
                     <div key={promo.id} className="flex flex-col gap-4">
                       <div className="group relative overflow-hidden rounded-2xl card-elevated transition-all duration-500 hover:shadow-elevated hover:-translate-y-1 border-2 border-primary/40 min-h-[220px]">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
+                        {promo.imageUrl ? (
+                          <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url(${promo.imageUrl})` }} />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent opacity-70" />
                         <div className="relative h-full flex flex-col justify-center items-center text-center p-6 text-primary-foreground gap-3">
                           <div className="flex items-center justify-center gap-2">
