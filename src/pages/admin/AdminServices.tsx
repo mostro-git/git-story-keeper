@@ -282,7 +282,7 @@ export default function AdminServices() {
   const openNewSpecialFor = (categoryId: string) => { resetSpecialForm(); setSpecialFormData((f) => ({ ...f, categoryId })); setIsSpecialDialogOpen(true); };
 
   // ───── Promotions ─────
-  const resetPromoForm = () => { setPromoForm({ name: '', description: '', phone: '' }); setEditingPromo(null); };
+  const resetPromoForm = () => { setPromoForm({ name: '', description: '', imageUrl: '', phone: '' }); setEditingPromo(null); };
   const handlePromoSubmit = () => {
     if (!promoForm.name?.trim() || !promoForm.description?.trim()) {
       toast({ title: 'Faltan datos', description: 'Completá título y descripción', variant: 'destructive' });
@@ -297,6 +297,7 @@ export default function AdminServices() {
         id: Date.now().toString(),
         name: promoForm.name!.trim(),
         description: promoForm.description!.trim(),
+        imageUrl: promoForm.imageUrl || undefined,
         phone,
         position: promotions.length,
       };
