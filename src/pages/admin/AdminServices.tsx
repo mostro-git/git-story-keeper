@@ -358,6 +358,12 @@ export default function AdminServices() {
                   />
                   <p className="text-xs text-muted-foreground">Si lo dejás vacío, se usa el número por defecto de la estética.</p>
                 </div>
+                <ImagePicker
+                  imageUrl={promoForm.imageUrl}
+                  onChange={(url) => setPromoForm({ ...promoForm, imageUrl: url })}
+                  cropperOpen={isPromoCropperOpen} setCropperOpen={setIsPromoCropperOpen}
+                  tempImg={promoTempImg} setTempImg={setPromoTempImg}
+                />
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsPromoDialogOpen(false)}>Cancelar</Button>
