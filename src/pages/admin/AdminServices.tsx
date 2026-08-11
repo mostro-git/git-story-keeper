@@ -376,6 +376,9 @@ export default function AdminServices() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {promotions.map((promo) => (
             <Card key={promo.id} className="card-elevated overflow-hidden border-primary/30">
+              {promo.imageUrl && (
+                <div className="h-32 bg-cover bg-center" style={{ backgroundImage: `url(${promo.imageUrl})` }} />
+              )}
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="font-display text-xl flex items-center gap-2">
