@@ -94,6 +94,7 @@ export interface Promotion {
   id: string;
   name: string;
   description: string;
+  imageUrl?: string;
   phone?: string; // formato wa.me: solo dígitos con código país
   position?: number;
 }

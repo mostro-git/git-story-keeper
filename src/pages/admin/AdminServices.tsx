@@ -128,8 +128,10 @@ export default function AdminServices() {
   // ===== Promotion dialog =====
   const [isPromoDialogOpen, setIsPromoDialogOpen] = useState(false);
   const [editingPromo, setEditingPromo] = useState<Promotion | null>(null);
+  const [isPromoCropperOpen, setIsPromoCropperOpen] = useState(false);
+  const [promoTempImg, setPromoTempImg] = useState('');
   const [promoForm, setPromoForm] = useState<Partial<Promotion>>({
-    name: '', description: '', phone: '',
+    name: '', description: '', imageUrl: '', phone: '',
   });
 
   // ===== Unique service dialog =====
@@ -280,7 +282,7 @@ export default function AdminServices() {
   const openNewSpecialFor = (categoryId: string) => { resetSpecialForm(); setSpecialFormData((f) => ({ ...f, categoryId })); setIsSpecialDialogOpen(true); };
 
   // ───── Promotions ─────
-  const resetPromoForm = () => { setPromoForm({ name: '', description: '', phone: '' }); setEditingPromo(null); };
+  const resetPromoForm = () => { setPromoForm({ name: '', description: '', imageUrl: '', phone: '' }); setEditingPromo(null); };
   const handlePromoSubmit = () => {
     if (!promoForm.name?.trim() || !promoForm.description?.trim()) {
       toast({ title: 'Faltan datos', description: 'Completá título y descripción', variant: 'destructive' });
@@ -295,6 +297,7 @@ export default function AdminServices() {
         id: Date.now().toString(),
         name: promoForm.name!.trim(),
         description: promoForm.description!.trim(),
+        imageUrl: promoForm.imageUrl || undefined,
         phone,
         position: promotions.length,
       };
@@ -355,6 +358,12 @@ export default function AdminServices() {
                   />
                   <p className="text-xs text-muted-foreground">Si lo dejás vacío, se usa el número por defecto de la estética.</p>
                 </div>
+                <ImagePicker
+                  imageUrl={promoForm.imageUrl}
+                  onChange={(url) => setPromoForm({ ...promoForm, imageUrl: url })}
+                  cropperOpen={isPromoCropperOpen} setCropperOpen={setIsPromoCropperOpen}
+                  tempImg={promoTempImg} setTempImg={setPromoTempImg}
+                />
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsPromoDialogOpen(false)}>Cancelar</Button>
@@ -367,6 +376,9 @@ export default function AdminServices() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {promotions.map((promo) => (
             <Card key={promo.id} className="card-elevated overflow-hidden border-primary/30">
+              {promo.imageUrl && (
+                <div className="h-32 bg-cover bg-center" style={{ backgroundImage: `url(${promo.imageUrl})` }} />
+              )}
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="font-display text-xl flex items-center gap-2">
