@@ -898,6 +898,7 @@ function mapPromotion(r) {
     id: r.id,
     name: r.name,
     description: r.description || '',
+    imageUrl: r.image_url || undefined,
     phone: r.phone || undefined,
     position: Number(r.position || 0),
   };
@@ -910,13 +911,14 @@ function upsertPromotion(p) {
   const pos = p.position == null ? Date.now() : Number(p.position);
   const phone = (p.phone || '').replace(/\D/g, '') || null;
   db.prepare(`
-    INSERT INTO promotions (id, name, description, phone, position)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO promotions (id, name, description, image_url, phone, position)
+    VALUES (?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       name = excluded.name, description = excluded.description,
+      image_url = excluded.image_url,
       phone = excluded.phone, position = excluded.position,
       updated_at = datetime('now')
-  `).run(p.id, p.name, p.description || '', phone, pos);
+  `).run(p.id, p.name, p.description || '', p.imageUrl || null, phone, pos);
   return mapPromotion(db.prepare('SELECT * FROM promotions WHERE id = ?').get(p.id));
 }
 function deletePromotion(id) {
