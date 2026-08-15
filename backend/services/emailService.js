@@ -110,4 +110,57 @@ async function sendCancellation({ to, clientName, serviceName, date, startTime }
   }
 }
 
-module.exports = { sendConfirmation, sendReschedule, sendCancellation, enabled, prettyDate };
+/**
+ * Agenda diaria: resumen de todos los turnos del día enviado al correo interno
+ * definido en AGENDA_NOTIFY_EMAIL. Un solo mail, un solo destinatario.
+ */
+async function sendDailyAgenda({ to, date, appointments = [] }) {
+  if (!enabled || !to || appointments.length === 0) return false;
+  const fecha = prettyDate(date);
+
+  const rows = appointments.map((a) => `
+    <tr>
+      <td style="padding:8px 10px;border-bottom:1px solid #eee"><strong>${esc(a.startTime)}</strong>${a.endTime ? ` – ${esc(a.endTime)}` : ''}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #eee">${esc(a.clientName) || '—'}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #eee">${esc(a.clientPhone) || '—'}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #eee">${esc(a.serviceName) || '—'}</td>
+    </tr>`).join('');
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;font-size:15px;color:#333;line-height:1.5">
+      <p>Agenda del <strong>${esc(fecha)}</strong> — ${appointments.length} turno(s):</p>
+      <table style="border-collapse:collapse;width:100%;max-width:640px;font-size:14px">
+        <thead>
+          <tr style="background:#f7f2f2;text-align:left">
+            <th style="padding:8px 10px">Horario</th>
+            <th style="padding:8px 10px">Cliente</th>
+            <th style="padding:8px 10px">Teléfono</th>
+            <th style="padding:8px 10px">Servicio</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p style="margin-top:24px;color:#a86b6b"><em>Meraki Estética</em></p>
+    </div>`;
+
+  const text = [`Agenda del ${fecha} — ${appointments.length} turno(s):`]
+    .concat(appointments.map((a) => `• ${a.startTime}${a.endTime ? `-${a.endTime}` : ''} | ${a.clientName || '—'} | ${a.clientPhone || '—'} | ${a.serviceName || '—'}`))
+    .join('\n');
+
+  try {
+    await transporter.sendMail({
+      from: `"Meraki Estética" <${process.env.GMAIL_USER}>`,
+      to,
+      subject: `Agenda del día ${fecha} — ${appointments.length} turno(s)`,
+      text,
+      html,
+    });
+    log('EMAIL', `agenda diaria (${date}) enviada a ${maskEmail(to)}`);
+    return true;
+  } catch (err) {
+    logError('EMAIL', err.message);
+    return false;
+  }
+}
+
+module.exports = { sendConfirmation, sendReschedule, sendCancellation, sendDailyAgenda, enabled, prettyDate };
