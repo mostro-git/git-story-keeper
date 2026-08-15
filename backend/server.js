@@ -72,6 +72,7 @@ const store = require('./db/sqlite');
 const paymentService = require('./services/paymentService');
 const emailService = require('./services/emailService');
 const whatsappService = require('./services/whatsappService');
+const dailyAgendaService = require('./services/dailyAgendaService');
 const queue = require('./utils/queue');
 
 const app = express();
@@ -388,6 +389,10 @@ setInterval(() => {
   } catch (err) { logError('CLEANUP', err.message); }
 }, 6 * 60 * 60 * 1000); // cada 6 horas
 
+// Agenda diaria: 90 min antes del inicio de la franja 1 de cada día.
+setInterval(() => { dailyAgendaService.tick(); }, 5 * 60 * 1000);
+setTimeout(() => { dailyAgendaService.tick(); }, 15 * 1000);
+
 // Backup diario sencillo (copia del .sqlite)
 const backupDir = path.join(__dirname, 'data', 'backups');
 const BACKUP_KEEP = Math.max(1, Number(process.env.BACKUP_KEEP || 7));
@@ -426,6 +431,7 @@ if (require.main === module) {
       console.log(`   MP:        ${paymentService.mpReady() ? '✓' : '✗ (sin MP_ACCESS_TOKEN)'}`);
       console.log(`   GMAIL:     ${emailService.enabled ? '✓' : '✗ (sin GMAIL_USER/PASSWORD)'}`);
       console.log(`   TWILIO:    ${whatsappService.enabled ? `✓ (${whatsappService.channel})` : '✗ (opcional)'}`);
+      console.log(`   AGENDA:    ${process.env.AGENDA_NOTIFY_EMAIL ? `✓ ${process.env.AGENDA_NOTIFY_EMAIL} (90 min antes de franja 1)` : '✗ (sin AGENDA_NOTIFY_EMAIL)'}`);
       console.log(`   RETENCIÓN: ${RETENTION_DAYS} días · ${MAX_LOGS} logs máx\n`);
     });
   } catch (err) {
